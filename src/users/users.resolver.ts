@@ -22,7 +22,7 @@ import {
   ReadPostsByUserIdCommentOutput,
 } from './dto/readPostsByUserIdComment.dto';
 
-@Resolver()
+@Resolver(() => User)
 export class UsersResolver {
   constructor(
     private readonly userService: UsersService,

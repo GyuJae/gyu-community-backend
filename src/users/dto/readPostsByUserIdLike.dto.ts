@@ -1,15 +1,11 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CoreOutput } from 'src/core/dto/coreOutput.dto';
-import { Post } from 'src/posts/models/post.model';
+import { InputType, ObjectType } from '@nestjs/graphql';
+import {
+  ReadPostsByUserIdInput,
+  ReadPostsByUserIdOutput,
+} from './readPostsByUserID.dto';
 
 @InputType()
-export class ReadPostsByUserIdLikeInput {
-  @Field(() => Int)
-  userId: number;
-}
+export class ReadPostsByUserIdLikeInput extends ReadPostsByUserIdInput {}
 
 @ObjectType()
-export class ReadPostsByUserIdLikeOutput extends CoreOutput {
-  @Field(() => [Post], { nullable: true })
-  posts?: Post[] | null;
-}
+export class ReadPostsByUserIdLikeOutput extends ReadPostsByUserIdOutput {}

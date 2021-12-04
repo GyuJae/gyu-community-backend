@@ -1,11 +1,11 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/core/dto/coreOutput.dto';
-import { Post } from 'src/posts/models/post.model';
+import { Comment } from '../model/comment.model';
 
 @InputType()
-export class ReadPostsByUserIdInput {
+export class ReadCommentsInput {
   @Field(() => Int)
-  userId: number;
+  postId: number;
 
   @Field(() => Int)
   skip: number;
@@ -15,10 +15,10 @@ export class ReadPostsByUserIdInput {
 }
 
 @ObjectType()
-export class ReadPostsByUserIdOutput extends CoreOutput {
-  @Field(() => [Post], { nullable: true })
-  posts?: Post[] | null;
+export class ReadCommentsOutput extends CoreOutput {
+  @Field(() => [Comment], { nullable: true })
+  comments?: Comment[] | null;
 
   @Field(() => Int, { nullable: true })
-  totalPages?: number | null;
+  totalPage?: number | null;
 }

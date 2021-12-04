@@ -16,14 +16,15 @@ enum Role {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  name      String    @unique
-  password  String
-  role      Role      @default(USER)
-  posts     Post[]
-  likes     Like[]
-  comments  Comment[]
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  name         String        @unique
+  password     String
+  role         Role          @default(USER)
+  posts        Post[]
+  likes        Like[]
+  comments     Comment[]
+  commentLikes CommentLike[]
 }
 
 model Post {
@@ -31,9 +32,10 @@ model Post {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   title      String    @db.VarChar(255)
+  content    String
   file       String[]
-  user       User?     @relation(fields: [userId], references: [id])
-  userId     Int?
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int
   likes      Like[]
   comments   Comment[]
   category   Category  @relation(references: [id], fields: [categoryId])
@@ -53,14 +55,27 @@ model Like {
 }
 
 model Comment {
+  id           Int           @id @default(autoincrement())
+  user         User          @relation(fields: [userId], references: [id])
+  post         Post          @relation(fields: [postId], references: [id])
+  payload      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  userId       Int
+  postId       Int
+  commentLikes CommentLike[]
+}
+
+model CommentLike {
   id        Int      @id @default(autoincrement())
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId Int
   user      User     @relation(fields: [userId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
-  payload   String
+  userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    Int
-  postId    Int
+
+  @@unique([commentId, userId])
 }
 
 model Category {

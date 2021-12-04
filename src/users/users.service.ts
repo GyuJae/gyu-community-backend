@@ -124,6 +124,8 @@ export class UsersService {
 
   async readPostsByUserId({
     userId,
+    skip,
+    take,
   }: ReadPostsByUserIdInput): Promise<ReadPostsByUserIdOutput> {
     try {
       const existUserId = await this.prismaService.user.findUnique({
@@ -138,10 +140,16 @@ export class UsersService {
       }
       const posts = await this.prismaService.post.findMany({
         where: { userId },
+        skip,
+        take,
+      });
+      const postsCount = await this.prismaService.post.count({
+        where: { userId },
       });
       return {
         ok: true,
         posts,
+        totalPages: Math.ceil(postsCount / take),
       };
     } catch (error) {
       return {
@@ -153,6 +161,8 @@ export class UsersService {
 
   async readPostsByUserIdLike({
     userId,
+    skip,
+    take,
   }: ReadPostsByUserIdLikeInput): Promise<ReadPostsByUserIdLikeOutput> {
     try {
       const userExists = await this.prismaService.user.findUnique({
@@ -174,10 +184,20 @@ export class UsersService {
             in: like.map((item) => item.postId),
           },
         },
+        skip,
+        take,
+      });
+      const postsCount = await this.prismaService.post.count({
+        where: {
+          id: {
+            in: like.map((item) => item.postId),
+          },
+        },
       });
       return {
         ok: true,
         posts,
+        totalPages: Math.ceil(postsCount / take),
       };
     } catch (error) {
       return {
@@ -189,6 +209,8 @@ export class UsersService {
 
   async readPostsByUserIdComment({
     userId,
+    skip,
+    take,
   }: ReadPostsByUserIdCommentInput): Promise<ReadPostsByUserIdCommentOutput> {
     try {
       const user = await this.prismaService.user.findUnique({
@@ -209,10 +231,20 @@ export class UsersService {
             in: comments.map((item) => item.postId),
           },
         },
+        skip,
+        take,
+      });
+      const postCoount = await this.prismaService.post.count({
+        where: {
+          id: {
+            in: comments.map((item) => item.postId),
+          },
+        },
       });
       return {
         ok: true,
         posts,
+        totalPages: Math.ceil(postCoount / take),
       };
     } catch (error) {
       return {

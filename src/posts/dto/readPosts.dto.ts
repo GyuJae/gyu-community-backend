@@ -1,12 +1,9 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/core/dto/coreOutput.dto';
-import { Post } from 'src/posts/models/post.model';
+import { Post } from '../models/post.model';
 
 @InputType()
-export class ReadPostsByUserIdInput {
-  @Field(() => Int)
-  userId: number;
-
+export class ReadPostsInput {
   @Field(() => Int)
   skip: number;
 
@@ -15,7 +12,7 @@ export class ReadPostsByUserIdInput {
 }
 
 @ObjectType()
-export class ReadPostsByUserIdOutput extends CoreOutput {
+export class ReadPostsOutput extends CoreOutput {
   @Field(() => [Post], { nullable: true })
   posts?: Post[] | null;
 

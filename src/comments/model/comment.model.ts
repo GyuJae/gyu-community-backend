@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Post {
+export class Comment {
   @Field(() => Int)
   id: number;
 
@@ -12,17 +12,11 @@ export class Post {
   updatedAt: Date;
 
   @Field(() => String)
-  title: string;
-
-  @Field(() => String)
-  content: string;
-
-  @Field(() => [String], { nullable: true })
-  file?: string[] | null;
+  payload: string;
 
   @Field(() => Int)
   userId: number;
 
   @Field(() => Int)
-  categoryId: number;
+  postId: number;
 }

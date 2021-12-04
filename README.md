@@ -9,18 +9,22 @@
 
 # Post
 
-- create post []
-- edit post []
-- delete post []
-- show posts []
-- show posts by category []
+- create post [O]
+- edit post [O]
+- delete post [O]
+- show posts [O]
+- show posts by category [O]
 
 # Comment
 
-- create comment []
-- delete comment []
+- create comment [O]
+- delete comment [O]
+- read comments [O]
 
 # Like
 
-- create like []
-- delete like []
+- create like(post) [O]
+- delete like(post) [O]
+- create like(comment) [O]
+- delete like(comment) [O]
+- count like [O]
