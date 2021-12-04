@@ -80,4 +80,12 @@ export class PostsResolver {
     });
     return count;
   }
+
+  @ResolveField(() => Boolean)
+  async isMine(
+    @Parent() { userId }: Post,
+    @CurrentUser() currentUser: User,
+  ): Promise<boolean> {
+    return userId === currentUser.id;
+  }
 }
