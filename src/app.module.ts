@@ -14,6 +14,7 @@ import { jwtConstants } from './auth/auth.contants';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { LikesModule } from './likes/likes.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { LikesModule } from './likes/likes.module';
     PostsModule,
     CommentsModule,
     LikesModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],
