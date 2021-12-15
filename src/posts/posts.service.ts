@@ -124,6 +124,9 @@ export class PostsService {
       const posts = await this.prismaService.post.findMany({
         skip,
         take,
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
       const postsCount = await this.prismaService.post.count();
       return {
@@ -149,6 +152,9 @@ export class PostsService {
         where: { categoryId },
         skip,
         take,
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
       const postsCount = await this.prismaService.post.count({
         where: { categoryId },

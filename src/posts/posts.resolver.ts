@@ -8,6 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { Category } from 'src/categories/models/category.model';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'src/users/models/user.model';
 import { CurrentUser } from 'src/users/users.decorator';
@@ -81,11 +82,33 @@ export class PostsResolver {
     return count;
   }
 
+  @ResolveField(() => Int)
+  async commentCount(@Parent() { id }: Post): Promise<number> {
+    const count = await this.prismaService.comment.count({
+      where: {
+        postId: id,
+      },
+    });
+    return count;
+  }
+  @ResolveField(() => Category)
+  async category(@Parent() { categoryId }: Post): Promise<Category> {
+    const result = await this.prismaService.category.findUnique({
+      where: {
+        id: categoryId,
+      },
+    });
+    return result;
+  }
+
   @ResolveField(() => Boolean)
   async isMine(
     @Parent() { userId }: Post,
     @CurrentUser() currentUser: User,
   ): Promise<boolean> {
+    if (!currentUser) {
+      return false;
+    }
     return userId === currentUser.id;
   }
 }

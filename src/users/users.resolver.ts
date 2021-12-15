@@ -2,7 +2,6 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from './users.service';
 import { User } from './models/user.model';
-import { User as prismaUser } from '.prisma/client';
 import { CreateUserInput, CreateUserOutput } from './dto/createUser.dto';
 import { LoginInput, LoginOutput } from './dto/login.dto';
 import { UseGuards } from '@nestjs/common';
@@ -31,12 +30,8 @@ export class UsersResolver {
 
   @Query(() => User)
   @UseGuards(AuthGuard)
-  whoAmI(@CurrentUser() user: User): Promise<prismaUser> {
-    return this.prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
+  async whoAmI(@CurrentUser() user: User): Promise<User> {
+    return user;
   }
 
   @Query(() => ReadPostsByUserIdOutput)

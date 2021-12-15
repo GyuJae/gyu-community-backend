@@ -13,8 +13,8 @@ export class User {
   @Field(() => String)
   password: string;
 
-  @Field(() => Role)
-  role: Role;
+  @Field(() => String)
+  role: string;
 }
 
 enum Role {
