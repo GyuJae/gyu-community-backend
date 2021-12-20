@@ -58,7 +58,7 @@ model Comment {
   id           Int           @id @default(autoincrement())
   user         User          @relation(fields: [userId], references: [id])
   post         Post          @relation(fields: [postId], references: [id])
-  payload      String
+  payload      String        @db.VarChar(255)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   userId       Int

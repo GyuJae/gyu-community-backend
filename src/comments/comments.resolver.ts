@@ -31,6 +31,49 @@ export class CommentsResolver {
     private readonly prismaService: PrismaService,
   ) {}
 
+  @ResolveField(() => Boolean)
+  async meLike(
+    @Parent() comment: Comment,
+    @CurrentUser() currentUser: User,
+  ): Promise<boolean> {
+    try {
+      if (!currentUser) {
+        return false;
+      }
+
+      const like = await this.prismaService.commentLike.findUnique({
+        where: {
+          commentId_userId: {
+            userId: currentUser.id,
+            commentId: comment.id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+      return like ? true : false;
+    } catch {
+      return false;
+    }
+  }
+
+  @ResolveField(() => Boolean)
+  async isMine(
+    @Parent() comment: Comment,
+    @CurrentUser() currentUser: User,
+  ): Promise<boolean> {
+    try {
+      if (!currentUser) {
+        return false;
+      }
+
+      return comment.userId === currentUser.id;
+    } catch {
+      return false;
+    }
+  }
+
   @Query(() => ReadCommentsOutput)
   async readComments(
     @Args('input') readCommentsInput: ReadCommentsInput,

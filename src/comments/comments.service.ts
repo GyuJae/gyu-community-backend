@@ -116,6 +116,9 @@ export class CommentsService {
         },
         skip,
         take,
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
       const commentCount = await this.prismaService.comment.count({
         where: {

@@ -20,6 +20,7 @@ import {
   ReadPostsByUserIdCommentInput,
   ReadPostsByUserIdCommentOutput,
 } from './dto/readPostsByUserIdComment.dto';
+import { FindUserByIdInput, FindUserByIdOutput } from './dto/findUserById.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -55,6 +56,13 @@ export class UsersResolver {
     return this.userService.readPostsByUserIdComment(
       readPostsByUserIdCommentInput,
     );
+  }
+
+  @Query(() => FindUserByIdOutput)
+  findUserById(
+    @Args('input') findUserByIdInput: FindUserByIdInput,
+  ): Promise<FindUserByIdOutput> {
+    return this.userService.findUserById(findUserByIdInput);
   }
 
   @Mutation(() => CreateUserOutput)

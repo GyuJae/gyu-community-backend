@@ -18,6 +18,7 @@ import {
   ReadPostsByUserIdCommentInput,
   ReadPostsByUserIdCommentOutput,
 } from './dto/readPostsByUserIdComment.dto';
+import { FindUserByIdInput, FindUserByIdOutput } from './dto/findUserById.dto';
 
 @Injectable()
 export class UsersService {
@@ -245,6 +246,27 @@ export class UsersService {
         ok: true,
         posts,
         totalPages: Math.ceil(postCoount / take),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async findUserById({ id }: FindUserByIdInput): Promise<FindUserByIdOutput> {
+    try {
+      const user = await this.prismaService.user.findUnique({ where: { id } });
+      if (!user) {
+        return {
+          ok: false,
+          error: 'This id does not exist',
+        };
+      }
+      return {
+        ok: true,
+        user,
       };
     } catch (error) {
       return {
