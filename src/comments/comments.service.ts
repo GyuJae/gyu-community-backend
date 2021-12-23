@@ -10,6 +10,10 @@ import {
   DeleteCommentOutput,
 } from './dto/deleteComment.dto';
 import { ReadCommentsInput, ReadCommentsOutput } from './dto/readComments.dto';
+import {
+  ReadCommentsLikeSortInput,
+  ReadCommentsLikeSortOutput,
+} from './dto/readCommentsLikeSort.dto';
 
 @Injectable()
 export class CommentsService {
@@ -120,6 +124,57 @@ export class CommentsService {
           createdAt: 'desc',
         },
       });
+      const commentCount = await this.prismaService.comment.count({
+        where: {
+          postId: targetPost.id,
+        },
+      });
+      return {
+        ok: true,
+        comments,
+        totalPage: Math.ceil(commentCount / take),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async readCommentsLikeSort({
+    postId,
+    skip,
+    take,
+  }: ReadCommentsLikeSortInput): Promise<ReadCommentsLikeSortOutput> {
+    try {
+      const targetPost = await this.prismaService.post.findUnique({
+        where: {
+          id: postId,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (!targetPost) {
+        return {
+          ok: false,
+          error: 'This postId does not exist',
+        };
+      }
+      const comments = await this.prismaService.comment.findMany({
+        where: {
+          postId: targetPost.id,
+        },
+        orderBy: {
+          commentLikes: {
+            _count: 'desc',
+          },
+        },
+        skip,
+        take,
+      });
+
       const commentCount = await this.prismaService.comment.count({
         where: {
           postId: targetPost.id,

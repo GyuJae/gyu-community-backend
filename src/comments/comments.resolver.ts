@@ -22,6 +22,10 @@ import {
   DeleteCommentOutput,
 } from './dto/deleteComment.dto';
 import { ReadCommentsInput, ReadCommentsOutput } from './dto/readComments.dto';
+import {
+  ReadCommentsLikeSortInput,
+  ReadCommentsLikeSortOutput,
+} from './dto/readCommentsLikeSort.dto';
 import { Comment } from './model/comment.model';
 
 @Resolver(() => Comment)
@@ -79,6 +83,13 @@ export class CommentsResolver {
     @Args('input') readCommentsInput: ReadCommentsInput,
   ): Promise<ReadCommentsOutput> {
     return this.commentService.readComments(readCommentsInput);
+  }
+
+  @Query(() => ReadCommentsLikeSortOutput)
+  async readCommentsLikeSort(
+    @Args('input') readCommentsLikeSortInput: ReadCommentsLikeSortInput,
+  ): Promise<ReadCommentsLikeSortOutput> {
+    return this.commentService.readCommentsLikeSort(readCommentsLikeSortInput);
   }
 
   @Mutation(() => CreateCommentOutput)

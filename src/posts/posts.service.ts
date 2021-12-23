@@ -9,6 +9,7 @@ import {
   ReadPostsByCategoryInput,
   ReadPostsByCategoryOutput,
 } from './dto/readPostsByCategory.dto';
+import { SearchPostsInput, SearchPostsOutput } from './dto/searchPosts.dto';
 
 @Injectable()
 export class PostsService {
@@ -158,6 +159,62 @@ export class PostsService {
       });
       const postsCount = await this.prismaService.post.count({
         where: { categoryId },
+      });
+      return {
+        ok: true,
+        posts,
+        totalPages: Math.ceil(postsCount / take),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async serachPosts({
+    payload,
+    skip,
+    take,
+  }: SearchPostsInput): Promise<SearchPostsOutput> {
+    try {
+      const posts = await this.prismaService.post.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: payload,
+              },
+            },
+            {
+              content: {
+                contains: payload,
+              },
+            },
+          ],
+        },
+        skip,
+        take,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      const postsCount = await this.prismaService.post.count({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: payload,
+              },
+            },
+            {
+              content: {
+                contains: payload,
+              },
+            },
+          ],
+        },
       });
       return {
         ok: true,

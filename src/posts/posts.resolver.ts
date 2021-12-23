@@ -21,6 +21,7 @@ import {
   ReadPostsByCategoryInput,
   ReadPostsByCategoryOutput,
 } from './dto/readPostsByCategory.dto';
+import { SearchPostsInput, SearchPostsOutput } from './dto/searchPosts.dto';
 import { Post } from './models/post.model';
 import { PostsService } from './posts.service';
 
@@ -43,6 +44,13 @@ export class PostsResolver {
     @Args('input') readPostsByCategoryInput: ReadPostsByCategoryInput,
   ): Promise<ReadPostsByCategoryOutput> {
     return this.postService.readPostsByCategoryId(readPostsByCategoryInput);
+  }
+
+  @Query(() => SearchPostsOutput)
+  async searchPosts(
+    @Args('input') searchPosts: SearchPostsInput,
+  ): Promise<SearchPostsOutput> {
+    return this.postService.serachPosts(searchPosts);
   }
 
   @Mutation(() => CreatePostOutput)
