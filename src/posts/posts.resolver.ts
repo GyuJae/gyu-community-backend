@@ -16,6 +16,11 @@ import { AuthGuard } from 'src/users/users.guard';
 import { CreatePostInput, CreatePostOutput } from './dto/createPost.dto';
 import { DeletePostInput, DeletePostOutput } from './dto/deletePost.dto';
 import { EditPostInput, EditPostOutput } from './dto/editPost.dto';
+import {
+  ReadLikeCountInput,
+  ReadLikeCountOutput,
+} from './dto/readLikeCount.dto';
+import { ReadPostByIdInput, ReadPostByIdOutput } from './dto/readPostById.dto';
 import { ReadPostsInput, ReadPostsOutput } from './dto/readPosts.dto';
 import {
   ReadPostsByCategoryInput,
@@ -51,6 +56,21 @@ export class PostsResolver {
     @Args('input') searchPosts: SearchPostsInput,
   ): Promise<SearchPostsOutput> {
     return this.postService.serachPosts(searchPosts);
+  }
+
+  @Query(() => ReadLikeCountOutput)
+  async readLikeCount(
+    @Args('input') readLikeCountInput: ReadLikeCountInput,
+    @CurrentUser() currentUser: User,
+  ): Promise<ReadLikeCountOutput> {
+    return this.postService.readLikeCount(readLikeCountInput, currentUser);
+  }
+
+  @Query(() => ReadPostByIdOutput)
+  async readPostById(
+    @Args('input') readPostByIdInput: ReadPostByIdInput,
+  ): Promise<ReadPostByIdOutput> {
+    return this.postService.readPostById(readPostByIdInput);
   }
 
   @Mutation(() => CreatePostOutput)
@@ -118,5 +138,32 @@ export class PostsResolver {
       return false;
     }
     return userId === currentUser.id;
+  }
+
+  @ResolveField(() => Boolean)
+  async meLike(
+    @Parent() post: Post,
+    @CurrentUser() currentUser: User,
+  ): Promise<boolean> {
+    try {
+      if (!currentUser) {
+        return false;
+      }
+
+      const like = await this.prismaService.like.findUnique({
+        where: {
+          postId_userId: {
+            postId: post.id,
+            userId: currentUser.id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+      return like ? true : false;
+    } catch {
+      return false;
+    }
   }
 }

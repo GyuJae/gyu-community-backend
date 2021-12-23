@@ -4,6 +4,11 @@ import { User } from 'src/users/models/user.model';
 import { CreatePostInput, CreatePostOutput } from './dto/createPost.dto';
 import { DeletePostInput, DeletePostOutput } from './dto/deletePost.dto';
 import { EditPostInput, EditPostOutput } from './dto/editPost.dto';
+import {
+  ReadLikeCountInput,
+  ReadLikeCountOutput,
+} from './dto/readLikeCount.dto';
+import { ReadPostByIdInput, ReadPostByIdOutput } from './dto/readPostById.dto';
 import { ReadPostsInput, ReadPostsOutput } from './dto/readPosts.dto';
 import {
   ReadPostsByCategoryInput,
@@ -220,6 +225,83 @@ export class PostsService {
         ok: true,
         posts,
         totalPages: Math.ceil(postsCount / take),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async readLikeCount(
+    { postId }: ReadLikeCountInput,
+    currentUser: User,
+  ): Promise<ReadLikeCountOutput> {
+    try {
+      const post = await this.prismaService.post.findUnique({
+        where: {
+          id: postId,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (!post) {
+        return {
+          ok: false,
+          error: 'This postId does not exist.',
+          meLike: false,
+        };
+      }
+      const likeCount = await this.prismaService.like.count({
+        where: {
+          postId: post.id,
+        },
+      });
+      const meLike = await this.prismaService.like.findUnique({
+        where: {
+          postId_userId: {
+            postId: post.id,
+            userId: currentUser.id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+      return {
+        ok: true,
+        likeCount,
+        meLike: meLike ? true : false,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+        meLike: false,
+      };
+    }
+  }
+
+  async readPostById({
+    postId,
+  }: ReadPostByIdInput): Promise<ReadPostByIdOutput> {
+    try {
+      const post = await this.prismaService.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+      if (!post) {
+        return {
+          ok: false,
+          error: 'This post Id dose not exist ',
+        };
+      }
+      return {
+        ok: true,
+        post,
       };
     } catch (error) {
       return {
