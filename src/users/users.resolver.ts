@@ -1,4 +1,11 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from './users.service';
 import { User } from './models/user.model';
@@ -28,6 +35,21 @@ export class UsersResolver {
     private readonly userService: UsersService,
     private readonly prisma: PrismaService,
   ) {}
+
+  @ResolveField(() => Boolean)
+  async isMe(
+    @Parent() parentUser: User,
+    @CurrentUser() currentUser: User,
+  ): Promise<boolean> {
+    try {
+      if (!currentUser) {
+        return false;
+      }
+      return currentUser.id === parentUser.id;
+    } catch {
+      return false;
+    }
+  }
 
   @Query(() => User)
   @UseGuards(AuthGuard)
